@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Telephony Android</string>
+    <string name="main_title">Telephony Probe</string>
+    <string name="main_hint">Chọn một mục để đọc dữ liệu SIM và mạng. Quyền sẽ được xin khi cần; mục nào không đọc được sẽ ghi rõ lý do.</string>
+    <string name="btn_sim">SIM</string>
+    <string name="btn_rat">Mạng (RAT)</string>
+    <string name="btn_5g">5G</string>
+    <string name="btn_config">Carrier config</string>
+    <string name="btn_volte">VoLTE</string>
+    <string name="btn_cell">Cell</string>
+    <string name="report_placeholder">Kết quả sẽ hiện ở đây.</string>
+    <string name="report_running">Đang đọc…</string>
+</resources>
