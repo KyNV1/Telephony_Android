@@ -20,8 +20,13 @@ public final class Permissions {
         return ContextCompat.checkSelfPermission(ctx, permission) == PackageManager.PERMISSION_GRANTED;
     }
 
+    /** Tên ngắn của quyền: "android.permission.READ_PHONE_STATE" -> "READ_PHONE_STATE". */
+    public static String shortName(String permission) {
+        return permission.substring(permission.lastIndexOf('.') + 1);
+    }
+
     public static String missingMessage(String permission) {
-        return "Thiếu quyền " + permission.substring(permission.lastIndexOf('.') + 1)
+        return "Thiếu quyền " + shortName(permission)
                 + ": cấp trong Cài đặt > Ứng dụng > Quyền rồi chạy lại";
     }
 }

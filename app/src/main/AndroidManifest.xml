@@ -10,6 +10,10 @@
     <uses-feature
         android:name="android.hardware.telephony"
         android:required="false" />
+    <!-- Khác app Bitel gốc (mặc định required=true): máy không có USB host vẫn cài được app. -->
+    <uses-feature
+        android:name="android.hardware.usb.host"
+        android:required="false" />
 
     <application
         android:allowBackup="false"
@@ -20,6 +24,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TelephonyAndroid">
+        <activity
+            android:name=".DeviceActivity"
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true">

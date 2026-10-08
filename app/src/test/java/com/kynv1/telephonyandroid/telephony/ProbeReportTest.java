@@ -1,6 +1,8 @@
 package com.kynv1.telephonyandroid.telephony;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -31,6 +33,14 @@ public class ProbeReportTest {
         assertEquals(2, r.count(ProbeReport.Level.SKIP));
         assertEquals(1, r.count(ProbeReport.Level.ERR));
         assertEquals(0, r.count(ProbeReport.Level.OK));
+    }
+
+    @Test
+    public void sensitive_defaultsToFalseAndCanBeSet() {
+        ProbeReport r = new ProbeReport();
+        assertFalse(r.isSensitive());
+        assertSame(r, r.sensitive());
+        assertTrue(r.isSensitive());
     }
 
     @Test

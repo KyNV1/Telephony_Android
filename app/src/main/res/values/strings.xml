@@ -8,6 +8,19 @@
     <string name="btn_config">Carrier config</string>
     <string name="btn_volte">VoLTE</string>
     <string name="btn_cell">Cell</string>
+    <string name="btn_device">Sinh trắc &amp; thiết bị →</string>
+    <string name="device_title">Thiết bị &amp; sinh trắc</string>
+    <string name="device_hint">Chọn một mục để đọc thông tin thiết bị hoặc thử xác thực sinh trắc. Dữ liệu nhạy cảm (vị trí, ID máy) không được ghi vào logcat.</string>
+    <string name="btn_device_id">ID máy</string>
+    <string name="btn_permissions">Quyền</string>
+    <string name="btn_location">Vị trí</string>
+    <string name="btn_usb">USB</string>
+    <string name="btn_usb_permission">Xin quyền USB</string>
+    <string name="btn_biometric_availability">Sinh trắc khả dụng</string>
+    <string name="btn_biometric_try">Thử xác thực</string>
+    <string name="btn_reset_counter">Đặt lại đếm</string>
+    <string name="btn_app_settings">Mở cài đặt</string>
+    <string name="switch_secure">Chặn chụp màn hình (FLAG_SECURE)</string>
     <string name="report_placeholder">Kết quả sẽ hiện ở đây.</string>
     <string name="report_running">Đang đọc…</string>
 </resources>

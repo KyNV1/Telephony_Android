@@ -25,6 +25,17 @@ public final class ProbeReport {
     }
 
     private final List<Line> lines = new ArrayList<>();
+    private boolean sensitive;
+
+    /** Đánh dấu báo cáo chứa dữ liệu nhạy cảm (vị trí, ID máy): người hiển thị không được ghi log. */
+    public ProbeReport sensitive() {
+        sensitive = true;
+        return this;
+    }
+
+    public boolean isSensitive() {
+        return sensitive;
+    }
 
     public ProbeReport section(String title) {
         return add(Level.SECTION, title);
