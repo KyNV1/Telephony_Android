@@ -43,10 +43,12 @@ public final class NetworkTypeMasks {
         return b.length() == 0 ? "other" : b.toString().trim();
     }
 
+    /** @return true nếu mask có bit 5G (NR) */
     public static boolean hasNr(long mask) {
         return (mask & M_NR) != 0;
     }
 
+    /** @return true nếu mask có ít nhất một bit 2G (GSM, GPRS, EDGE) */
     public static boolean has2g(long mask) {
         return (mask & M_2G) != 0;
     }

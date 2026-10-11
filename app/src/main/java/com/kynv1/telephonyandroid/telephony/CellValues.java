@@ -10,10 +10,12 @@ public final class CellValues {
 
     private CellValues() {}
 
+    /** Đổi giá trị int thành chữ; Integer.MAX_VALUE và -1 thành {@link #UNAVAILABLE}. */
     public static String format(int value) {
         return (value == Integer.MAX_VALUE || value == -1) ? UNAVAILABLE : String.valueOf(value);
     }
 
+    /** Đổi giá trị long thành chữ; Long.MAX_VALUE và -1 thành {@link #UNAVAILABLE}. */
     public static String format(long value) {
         return (value == Long.MAX_VALUE || value == -1L) ? UNAVAILABLE : String.valueOf(value);
     }

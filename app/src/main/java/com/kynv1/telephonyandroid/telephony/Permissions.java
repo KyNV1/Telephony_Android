@@ -16,10 +16,12 @@ public final class Permissions {
 
     private Permissions() {}
 
+    /** @return true nếu quyền runtime đã được cấp cho ứng dụng */
     public static boolean has(Context ctx, String permission) {
         return ContextCompat.checkSelfPermission(ctx, permission) == PackageManager.PERMISSION_GRANTED;
     }
 
+    /** Thông báo thiếu quyền, chỉ lấy phần tên cuối (ví dụ READ_PHONE_STATE) và hướng dẫn cách cấp. */
     public static String missingMessage(String permission) {
         return "Thiếu quyền " + permission.substring(permission.lastIndexOf('.') + 1)
                 + ": cấp trong Cài đặt > Ứng dụng > Quyền rồi chạy lại";

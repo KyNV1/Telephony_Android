@@ -70,6 +70,12 @@ public final class FiveGDiagnoser {
         return Verdict.NO_NR_COVERAGE;
     }
 
+    /**
+     * Kiểm tra biểu tượng mạng trên thanh trạng thái có phải 5G không.
+     *
+     * @param overrideType TelephonyDisplayInfo.OVERRIDE_NETWORK_TYPE_*
+     * @return true nếu là NR_NSA, NR_NSA_MMWAVE hoặc NR_ADVANCED
+     */
     public static boolean isNrOverride(int overrideType) {
         return overrideType == TelephonyDisplayInfo.OVERRIDE_NETWORK_TYPE_NR_NSA
                 || overrideType == TelephonyDisplayInfo.OVERRIDE_NETWORK_TYPE_NR_NSA_MMWAVE
@@ -91,6 +97,7 @@ public final class FiveGDiagnoser {
         return o.toString();
     }
 
+    /** Đổi NR state (NR_*) thành tên để in; giá trị lạ hoặc không đọc được trả "n/a". */
     public static String nrName(int s) {
         switch (s) {
             case NR_NONE:
@@ -106,6 +113,7 @@ public final class FiveGDiagnoser {
         }
     }
 
+    /** Đổi OVERRIDE_NETWORK_TYPE_* thành tên để in; {@link #OVERRIDE_UNKNOWN} trả "n/a", giá trị lạ trả chính con số. */
     public static String overrideName(int type) {
         switch (type) {
             case TelephonyDisplayInfo.OVERRIDE_NETWORK_TYPE_NONE:

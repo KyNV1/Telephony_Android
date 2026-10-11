@@ -30,12 +30,29 @@ public final class FiveGProbe {
         }
     }
 
+    /**
+     * Điểm vào của probe 5G: với mỗi SIM đang hoạt động, in các tín hiệu 5G và kết luận chẩn đoán.
+     * Phải gọi từ thread nền vì {@link DisplayInfoReader} chờ callback.
+     *
+     * @param ctx context của ứng dụng
+     * @return báo cáo chẩn đoán 5G theo từng SIM, không bao giờ null
+     */
     public static ProbeReport run(Context ctx) {
         ProbeReport r = new ProbeReport();
         SubscriptionScanner.forEach(ctx, r, (si, tm) -> diagnose(ctx, r, si, tm));
         return r;
     }
 
+    /**
+     * Thu thập RAT, NR state, mask USER/CARRIER, carrier config và display override của một SIM,
+     * in ra từng tín hiệu (bước không đọc được thì ghi lý do bỏ qua) rồi ghi kết luận
+     * của {@link FiveGDiagnoser}: mức OK nếu đang 5G, ngược lại là cảnh báo.
+     *
+     * @param ctx context của ứng dụng
+     * @param r   báo cáo để ghi kết quả
+     * @param si  thông tin subscription của SIM đang xét
+     * @param tm  TelephonyManager đã gắn đúng SIM này
+     */
     private static void diagnose(Context ctx, ProbeReport r, SubscriptionInfo si, TelephonyManager tm) {
         int rat = RatProbe.dataNetworkType(tm);
         NrState nr = readNrState(tm);
@@ -65,10 +82,19 @@ public final class FiveGProbe {
         }
     }
 
+    /** Đổi kết quả có thể null thành chữ: "true", "false" hoặc "không rõ" khi không đọc được. */
     private static String describe(Boolean value) {
         return value == null ? "không rõ" : String.valueOf(value);
     }
 
+    /**
+     * Đọc NR state của đăng ký dữ liệu (PS, WWAN) bằng reflection vì đây là API ẩn. Không đọc được
+     * (API dưới 30, ServiceState null, API ẩn bị chặn...) thì trả {@link FiveGDiagnoser#NR_UNREADABLE}
+     * kèm lý do, không ném lỗi.
+     *
+     * @param tm TelephonyManager đã gắn đúng SIM cần đọc
+     * @return NR state hoặc lý do không đọc được
+     */
     private static NrState readNrState(TelephonyManager tm) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {
             return new NrState(FiveGDiagnoser.NR_UNREADABLE, "cần API 30 trở lên");

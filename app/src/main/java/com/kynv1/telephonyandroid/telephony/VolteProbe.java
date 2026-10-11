@@ -16,19 +16,41 @@ public final class VolteProbe {
 
     private VolteProbe() {}
 
+    /**
+     * Điểm vào của probe VoLTE: với mỗi SIM, in các khóa VoLTE trong carrier config và công tắc Advanced calling.
+     *
+     * @param ctx context của ứng dụng
+     * @return báo cáo theo từng SIM, không bao giờ null
+     */
     public static ProbeReport run(Context ctx) {
         ProbeReport r = new ProbeReport();
         SubscriptionScanner.forEach(ctx, r, (si, tm) -> describe(ctx, r, si.getSubscriptionId()));
         return r;
     }
 
+    /**
+     * Ghi thông tin VoLTE của một SIM: khóa carrier config, công tắc Advanced calling và lưu ý
+     * rằng công tắc bật chưa chắc VoLTE đang chạy.
+     *
+     * @param ctx   context của ứng dụng
+     * @param r     báo cáo để ghi kết quả
+     * @param subId id subscription của SIM đang xét
+     */
     private static void describe(Context ctx, ProbeReport r, int subId) {
         CarrierConfigProbe.reportVolteKeys(ctx, subId, r);
         describeAdvancedCalling(ctx, r, subId);
         r.info("Lưu ý: công tắc bật chưa chắc VoLTE đang chạy; trạng thái đăng ký IMS cần READ_PRECISE_PHONE_STATE");
     }
 
-    // Quyền này chỉ dành cho app đặc quyền; app thường thiếu quyền là kết quả dự kiến và được bắt bên dưới.
+    /**
+     * Đọc công tắc Advanced calling (VoLTE) qua ImsMmTelManager. Quyền cần có chỉ dành cho app đặc quyền,
+     * nên app thường thiếu quyền là kết quả dự kiến và chỉ ghi dòng bỏ qua. Cũng bỏ qua kèm lý do khi
+     * API dưới 30 hoặc thiết bị không có IMS.
+     *
+     * @param ctx   context của ứng dụng
+     * @param r     báo cáo để ghi kết quả
+     * @param subId id subscription của SIM đang xét
+     */
     @SuppressLint("MissingPermission")
     private static void describeAdvancedCalling(Context ctx, ProbeReport r, int subId) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.R) {

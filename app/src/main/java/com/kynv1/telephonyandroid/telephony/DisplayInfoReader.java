@@ -27,6 +27,7 @@ public final class DisplayInfoReader {
 
     private DisplayInfoReader() {}
 
+    /** Kết quả đọc: loại override hoặc lý do không đọc được ({@code error} khác null). */
     public static final class Result {
         public final int overrideType;
         public final String error;
@@ -37,6 +38,7 @@ public final class DisplayInfoReader {
         }
     }
 
+    /** Nhận thông tin hiển thị từ hệ thống, lưu override type và mở latch để thread chờ tiếp tục. */
     @RequiresApi(Build.VERSION_CODES.S)
     private static final class Callback extends TelephonyCallback
             implements TelephonyCallback.DisplayInfoListener {
@@ -50,6 +52,14 @@ public final class DisplayInfoReader {
         }
     }
 
+    /**
+     * Đăng ký callback, chờ lần báo đầu tiên (tối đa {@link #TIMEOUT_SECONDS} giây) rồi hủy đăng ký.
+     * Callback chạy trên main executor còn hàm này chờ trên thread gọi, nên không được gọi từ main thread.
+     *
+     * @param ctx context của ứng dụng
+     * @param tm  TelephonyManager đã gắn đúng SIM cần đọc
+     * @return override type, hoặc lý do không đọc được (API dưới 31, thiếu quyền, main thread, hết giờ, lỗi)
+     */
     @SuppressLint("MissingPermission")
     public static Result read(Context ctx, TelephonyManager tm) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
@@ -82,6 +92,7 @@ public final class DisplayInfoReader {
         }
     }
 
+    /** Tạo kết quả không đọc được với override type {@link FiveGDiagnoser#OVERRIDE_UNKNOWN}. */
     private static Result unavailable(String reason) {
         return new Result(FiveGDiagnoser.OVERRIDE_UNKNOWN, reason);
     }

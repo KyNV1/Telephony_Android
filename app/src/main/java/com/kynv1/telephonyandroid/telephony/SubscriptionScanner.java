@@ -17,13 +17,27 @@ import java.util.List;
  */
 public final class SubscriptionScanner {
 
+    /** Việc cần làm cho mỗi SIM. */
     public interface Visitor {
+        /**
+         * @param si thông tin subscription của SIM đang xét
+         * @param tm TelephonyManager đã gắn đúng SIM này
+         */
         void visit(SubscriptionInfo si, TelephonyManager tm);
     }
 
     private SubscriptionScanner() {}
 
-    // READ_PHONE_STATE đã được kiểm tra bằng Permissions.has ngay bên dưới; SecurityException vẫn được bắt.
+    /**
+     * Kiểm tra điều kiện (có telephony, có quyền, có dịch vụ hệ thống, có SIM) rồi gọi
+     * {@code visitor} cho từng SIM đang hoạt động, mỗi SIM có một tiêu đề riêng trong báo cáo.
+     * Điều kiện nào không đạt thì ghi lý do vào {@code r} và dừng, không gọi {@code visitor}.
+     * READ_PHONE_STATE được kiểm tra bằng {@link Permissions#has} trước khi đọc; SecurityException vẫn được bắt.
+     *
+     * @param ctx     context của ứng dụng
+     * @param r       báo cáo để ghi tiêu đề SIM và các lý do không duyệt được
+     * @param visitor việc cần làm cho mỗi SIM
+     */
     @SuppressLint("MissingPermission")
     public static void forEach(Context ctx, ProbeReport r, Visitor visitor) {
         if (!ctx.getPackageManager().hasSystemFeature(PackageManager.FEATURE_TELEPHONY)) {

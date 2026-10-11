@@ -10,12 +10,30 @@ public final class SimInfoProbe {
 
     private SimInfoProbe() {}
 
+    /**
+     * Điểm vào của probe SIM: duyệt từng SIM đang hoạt động và ghi thông tin của SIM đó vào báo cáo.
+     * Nếu không duyệt được (không có telephony, thiếu quyền, không có SIM) thì lý do đã được
+     * {@link SubscriptionScanner} ghi sẵn vào báo cáo. Phải gọi từ thread nền.
+     *
+     * @param ctx context của ứng dụng, dùng để lấy các dịch vụ hệ thống
+     * @return báo cáo chứa thông tin từng SIM, không bao giờ null
+     */
     public static ProbeReport run(Context ctx) {
         ProbeReport r = new ProbeReport();
         SubscriptionScanner.forEach(ctx, r, (si, tm) -> describe(r, si, tm));
         return r;
     }
 
+    /**
+     * Ghi thông tin của một SIM vào báo cáo: tên hiển thị, quốc gia (kèm MCC-MNC từ API 29),
+     * eSIM hay không (từ API 28) và app có carrier privilege trên SIM này hay không.
+     * Không có carrier privilege chỉ là thông tin vì app thường không bao giờ có; chỉ khi
+     * việc kiểm tra ném lỗi mới ghi mức lỗi.
+     *
+     * @param r  báo cáo để ghi các dòng kết quả
+     * @param si thông tin subscription của SIM đang xét
+     * @param tm TelephonyManager đã gắn đúng SIM này
+     */
     private static void describe(ProbeReport r, SubscriptionInfo si, TelephonyManager tm) {
         r.info("Tên hiển thị: " + si.getDisplayName());
         String mccMnc = "";

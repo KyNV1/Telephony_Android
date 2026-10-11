@@ -30,14 +30,17 @@ public final class RatProbe {
             this.error = error;
         }
 
+        /** Tạo kết quả thành công; giá trị -1 từ telephony được coi là không đọc được. */
         static Mask of(long value) {
             return value == NetworkTypeMasks.UNREADABLE ? failed("telephony trả -1") : new Mask(value, null);
         }
 
+        /** Tạo kết quả không đọc được kèm lý do. */
         static Mask failed(String error) {
             return new Mask(NetworkTypeMasks.UNREADABLE, error);
         }
 
+        /** @return true nếu đọc được mask (không có lỗi) */
         public boolean ok() {
             return error == null;
         }
@@ -48,12 +51,25 @@ public final class RatProbe {
         }
     }
 
+    /**
+     * Điểm vào của probe RAT: với mỗi SIM đang hoạt động, in loại mạng dữ liệu hiện tại và các mask cho phép.
+     *
+     * @param ctx context của ứng dụng
+     * @return báo cáo theo từng SIM, không bao giờ null
+     */
     public static ProbeReport run(Context ctx) {
         ProbeReport r = new ProbeReport();
         SubscriptionScanner.forEach(ctx, r, (si, tm) -> describe(r, tm));
         return r;
     }
 
+    /**
+     * Ghi loại mạng dữ liệu hiện tại và ba mask (USER, CARRIER, 2G) của một SIM.
+     * Nếu cả ba đều không đọc được thì chỉ ghi một dòng bỏ qua kèm lý do.
+     *
+     * @param r  báo cáo để ghi kết quả
+     * @param tm TelephonyManager đã gắn đúng SIM này
+     */
     private static void describe(ProbeReport r, TelephonyManager tm) {
         int rat = dataNetworkType(tm);
         r.info("Loại mạng dữ liệu hiện tại: " + NetworkTypeMasks.ratName(rat) + " (NETWORK_TYPE=" + rat + ")");
@@ -74,6 +90,7 @@ public final class RatProbe {
         }
     }
 
+    /** In một mask dưới dạng chữ (ví dụ "LTE 5G"), hoặc dòng bỏ qua kèm lý do nếu không đọc được. */
     private static void describeMask(ProbeReport r, String label, Mask m) {
         if (m.ok()) {
             r.info("Mask " + label + ": " + NetworkTypeMasks.decode(m.value));
@@ -82,7 +99,14 @@ public final class RatProbe {
         }
     }
 
-    // Gọi trong try/catch SecurityException: app thường không có quyền này và đó là kết quả bình thường.
+    /**
+     * Đọc mask loại mạng được phép theo một "reason". App thường không có quyền này nên
+     * SecurityException là kết quả bình thường và được đổi thành {@link Mask} không đọc được, không ném ra ngoài.
+     *
+     * @param tm     TelephonyManager đã gắn đúng SIM cần đọc
+     * @param reason ALLOWED_NETWORK_TYPES_REASON_* ({@link #REASON_USER}, {@link #REASON_CARRIER}, {@link #REASON_2G})
+     * @return mask hoặc lý do không đọc được (API dưới 31, thiếu quyền, lỗi khác)
+     */
     @SuppressLint("MissingPermission")
     public static Mask readMask(TelephonyManager tm, int reason) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
@@ -97,6 +121,12 @@ public final class RatProbe {
         }
     }
 
+    /**
+     * Đọc loại mạng dữ liệu hiện tại (NETWORK_TYPE_*).
+     *
+     * @param tm TelephonyManager đã gắn đúng SIM cần đọc
+     * @return NETWORK_TYPE_*, hoặc NETWORK_TYPE_UNKNOWN nếu không đọc được
+     */
     @SuppressLint("MissingPermission")
     public static int dataNetworkType(TelephonyManager tm) {
         try {

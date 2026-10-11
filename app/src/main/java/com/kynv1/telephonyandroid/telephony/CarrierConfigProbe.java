@@ -29,6 +29,12 @@ public final class CarrierConfigProbe {
     private CarrierConfigProbe() {
     }
 
+    /**
+     * Điểm vào của probe carrier config: với mỗi SIM, in khả năng hỗ trợ NR (5G) và 4 khóa VoLTE.
+     *
+     * @param ctx context của ứng dụng
+     * @return báo cáo theo từng SIM, không bao giờ null
+     */
     public static ProbeReport run(Context ctx) {
         ProbeReport r = new ProbeReport();
         SubscriptionScanner.forEach(ctx, r, (si, tm) -> {

@@ -26,6 +26,12 @@ public final class CellInfoProbe {
 
     private CellInfoProbe() {}
 
+    /**
+     * Điểm vào của probe cell: kiểm tra quyền vị trí rồi in danh sách cell xung quanh của từng SIM.
+     *
+     * @param ctx context của ứng dụng
+     * @return báo cáo các cell theo từng SIM, hoặc lỗi thiếu quyền vị trí; không bao giờ null
+     */
     public static ProbeReport run(Context ctx) {
         ProbeReport r = new ProbeReport();
         if (!Permissions.has(ctx, Permissions.LOCATION)) {
@@ -36,6 +42,13 @@ public final class CellInfoProbe {
         return r;
     }
 
+    /**
+     * Lấy danh sách cell của một SIM và in từng cell; cell đang kết nối được đánh dấu.
+     * Danh sách rỗng hoặc thiếu quyền được ghi kèm lý do.
+     *
+     * @param r  báo cáo để ghi kết quả
+     * @param tm TelephonyManager đã gắn đúng SIM này
+     */
     @SuppressLint("MissingPermission")
     private static void describe(ProbeReport r, TelephonyManager tm) {
         List<CellInfo> cells;
@@ -55,6 +68,12 @@ public final class CellInfoProbe {
         }
     }
 
+    /**
+     * Mô tả một cell theo công nghệ: LTE (CI, TAC), 3G và 2G (CID, LAC), 5G (NCI, TAC).
+     * Loại cell khác chỉ in tên lớp.
+     *
+     * @param ci cell cần mô tả
+     */
     private static String describeCell(CellInfo ci) {
         if (ci instanceof CellInfoLte) {
             CellIdentityLte id = ((CellInfoLte) ci).getCellIdentity();
@@ -74,6 +93,7 @@ public final class CellInfoProbe {
         return "Loại cell khác: " + ci.getClass().getSimpleName();
     }
 
+    /** Mô tả cell 5G (NCI, TAC); tách riêng vì CellInfoNr chỉ có từ API 29. */
     @RequiresApi(Build.VERSION_CODES.Q)
     private static String describeNr(CellInfoNr ci) {
         CellIdentityNr id = (CellIdentityNr) ci.getCellIdentity();
